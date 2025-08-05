@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Centro de Inteligência Estratégica para a Gestão Estadual do SUS - CIEGES-ES">
+    <meta name="keywords" content="CIEGES, SUS, saúde, Espírito Santo, gestão, regulação ambulatorial, mandados judiciais">
+    <meta name="author" content="SESA-ES - Secretaria de Estado da Saúde do Espírito Santo">
+    <title>CIEGES-ES - Centro de Inteligência Estratégica para a Gestão Estadual do SUS</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/auth-styles.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- SAS Authentication Library -->
+    <script async src="https://cdn.developer.sas.com/packages/sas-auth-browser/latest/dist/index.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar de Navegação -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <div class="sidebar-emblem">
+                    <img src="assets/images/00 - Navbar Lateral Esquerda/Brasão - SESA ES.png" alt="Brasão SESA-ES" class="brasao">
+                </div>
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" id="nav-home" aria-label="Página Inicial">
+                        <img src="assets/images/00 - Navbar Lateral Esquerda/Ícone - Página Inicial.png" alt="Página Inicial" class="nav-icon">
+                        <span>Página Inicial</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="nav-public" aria-label="Acesso Público">
+                        <img src="assets/images/00 - Navbar Lateral Esquerda/Ícone - Acesso Público.png" alt="Acesso Público" class="nav-icon">
+                        <span>Acesso Público</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="nav-restricted" aria-label="Acesso Restrito">
+                        <img src="assets/images/00 - Navbar Lateral Esquerda/Ícone - Acesso Restrito.png" alt="Acesso Restrito" class="nav-icon">
+                        <span>Acesso Restrito</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="sidebar-access-button">
+            <button class="access-request-button" aria-label="Solicitar Acesso Restrito">
+                <i class="fas fa-lock"></i>
+                <span>Solicitar Acesso Restrito</span>
+            </button>
+        </div>
+        
+        <div class="sidebar-divider"></div>
+        
+        <div class="sidebar-footer">
+            <p>Secretaria da Saúde (SESA-ES)</p>
+            <p>© Copyright 2025</p>
+            <p>Versão 1.0.0</p>
+        </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <div class="breadcrumb-content">
+                <span class="cieges-highlight">CIEGES-ES</span>
+                <i class="fas fa-slash"></i>
+                <span id="breadcrumb-level-1">Página Inicial</span>
+                <i id="breadcrumb-separator-1" class="fas fa-slash hidden"></i>
+                <span id="breadcrumb-level-2" class="hidden"></span>
+                <i id="breadcrumb-separator-2" class="fas fa-slash hidden"></i>
+                <span id="breadcrumb-level-3" class="hidden"></span>
+            </div>
+            
+            <!-- Navegação Mobile -->
+            <div class="mobile-nav">
+                <button class="mobile-nav-button" id="mobile-nav-home" aria-label="Página Inicial">
+                    <i class="fas fa-home"></i>
+                    <span>Inicial</span>
+                </button>
+                <button class="mobile-nav-button" id="mobile-nav-public" aria-label="Acesso Público">
+                    <i class="fas fa-globe"></i>
+                    <span>Público</span>
+                </button>
+                <button class="mobile-nav-button" id="mobile-nav-restricted" aria-label="Acesso Restrito">
+                    <i class="fas fa-lock"></i>
+                    <span>Restrito</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Conteúdo da Página Inicial -->
+        <div class="page-content" id="page-home">
+            <div class="page-header">
+                <h1>Página Inicial</h1>
+                <p class="page-description">
+                    O Centro de Inteligência Estratégica para a Gestão Estadual do SUS (Cieges) é uma iniciativa que visa transformar a gestão do Sistema Único de Saúde (SUS) nos estados, impulsionando a tomada de decisões mais assertivas e eficientes.
+                </p>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Acompanhe a regulação dos atendimentos ambulatoriais</h3>
+                    </div>
+                    <div class="card-illustration">
+                        <img src="assets/images/01 - Página Inicial/Ilustração 1 - Regulação Ambulatorial.png" alt="Regulação dos atendimentos ambulatoriais" class="card-image">
+                    </div>
+                    <div class="card-description">
+                        <p>Consulte dados sobre a produção ambulatorial e identifique pendências no registro de atendimentos realizados pelas unidades de saúde. Facilita a análise e a correção de inconsistências nas bases do SUS.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Monitore a gestão de mandados judiciais de saúde</h3>
+                    </div>
+                    <div class="card-illustration">
+                        <img src="assets/images/01 - Página Inicial/Ilustração 2 - Mandados Judiciais.png" alt="Gestão de mandados judiciais" class="card-image">
+                    </div>
+                    <div class="card-description">
+                        <p>Acesse os painéis de Mandados Judiciais para acompanhar solicitações, status e prazos, garantindo respostas mais ágeis e eficientes às demandas judiciais em saúde.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Decisões mais rápidas com dados confiáveis</h3>
+                    </div>
+                    <div class="card-illustration">
+                        <img src="assets/images/01 - Página Inicial/Ilustração 3 - Indicadores Estratégicos.png" alt="Indicadores estratégicos" class="card-image">
+                    </div>
+                    <div class="card-description">
+                        <p>O CIEGES transforma dados em inteligência para apoiar a gestão estadual do SUS. Visualize indicadores estratégicos que ajudam na tomada de decisões mais assertivas e baseadas em evidências.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo da Página de Acesso Público -->
+        <div class="page-content hidden" id="page-public">
+            <div class="page-header">
+                <div class="back-link">
+                    <a href="#" id="back-to-home">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Voltar</span>
+                    </a>
+                </div>
+                <h1>Acesso Público</h1>
+                <p class="page-description">
+                    Relatórios e dashboards disponíveis à toda população Capixaba.
+                </p>
+            </div>
+
+            <div class="groups-grid">
+                <div class="group-card">
+                    <div class="group-header">
+                        <img src="assets/images/00 - Navbar Lateral Esquerda/Ícone - Acesso Público.png" alt="MJ Painel Público" class="group-icon">
+                        <h3>MJ Painel Público</h3>
+                        <a href="https://app.wiki.saude.es.gov.br/" target="_blank" class="info-button" aria-label="Mais informações sobre MJ Painel Público na Wiki da SESA-ES" title="Mais informações sobre MJ Painel Público na Wiki da SESA-ES">
+                            <i class="fas fa-info"></i>
+                        </a>
+                    </div>
+                    <div class="group-description">
+                        <p>Painéis públicos de monitoramento da judicialização da saúde no Espírito Santo, oferecendo transparência e acesso democrático aos dados de saúde pública para toda a população capixaba.</p>
+                    </div>
+                    <button class="group-button" aria-label="Acessar grupo de MJ Painel Público">
+                        <i class="fas fa-folder"></i>
+                        Acessar grupo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo da Página de MJ Painel Público -->
+        <div class="page-content hidden" id="page-mj-public">
+            <div class="page-header">
+                <div class="back-link">
+                    <a href="#" id="back-to-public-mj">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Voltar</span>
+                    </a>
+                </div>
+                <h1>MJ Painel Público</h1>
+                <p class="page-description">
+                    Breve parágrafo para contextualizar os usuários sobre quais produtos estarão disponíveis aqui.
+                </p>
+            </div>
+
+            <div class="panels-grid">
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>Observatório da Saúde</h3>
+                    </div>
+                    <a href="https://sesa.viya.saude.es.gov.br/observatoriocapixabadedireitoasaude" target="_blank" class="panel-button" aria-label="Acessar painel Observatório da Saúde">
+                        <i class="fas fa-chart-bar"></i>
+                        Acessar painel
+                    </a>
+                </div>
+
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>Histórico</h3>
+                    </div>
+                    <a href="https://sesa.viya.saude.es.gov.br/mj-historico" target="_blank" class="panel-button" aria-label="Acessar painel de Histórico">
+                        <i class="fas fa-chart-bar"></i>
+                        Acessar painel
+                    </a>
+                </div>
+
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>Situação</h3>
+                    </div>
+                    <a href="https://sesa.viya.saude.es.gov.br/mj-situacao" target="_blank" class="panel-button" aria-label="Acessar painel de Situação">
+                        <i class="fas fa-chart-bar"></i>
+                        Acessar painel
+                    </a>
+                </div>
+
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>Indicadores de Saúde</h3>
+                    </div>
+                    <a href="https://sesa.viya.saude.es.gov.br/mj-indicadores-saude" target="_blank" class="panel-button" aria-label="Acessar painel de Indicadores de Saúde">
+                        <i class="fas fa-chart-bar"></i>
+                        Acessar painel
+                    </a>
+                </div>
+
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>Indicadores Judiciais</h3>
+                    </div>
+                    <a href="https://sesa.viya.saude.es.gov.br/mj-indicadores-judiciais" target="_blank" class="panel-button" aria-label="Acessar painel de Indicadores Judiciais">
+                        <i class="fas fa-chart-bar"></i>
+                        Acessar painel
+                    </a>
+                </div>
+
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>Indicadores Financeiros</h3>
+                    </div>
+                    <a href="https://sesa.viya.saude.es.gov.br/mj-indicadores-financeiros" target="_blank" class="panel-button" aria-label="Acessar painel de Indicadores Financeiros">
+                        <i class="fas fa-chart-bar"></i>
+                        Acessar painel
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo da Página de Acesso Restrito -->
+        <div class="page-content hidden" id="page-restricted">
+            <div class="page-header">
+                <div class="back-link">
+                    <a href="#" id="back-to-home-restricted">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Voltar</span>
+                    </a>
+                </div>
+                <h1>Acesso Restrito</h1>
+                <p class="page-description">
+                    Painéis e relatórios exclusivos para gestores e profissionais autorizados.
+                </p>
+            </div>
+
+            <div class="groups-grid">
+                <div class="group-card">
+                    <div class="group-header">
+                        <img src="assets/images/00 - Navbar Lateral Esquerda/Ícone - Regulação Ambulatorial.png" alt="Regulação Ambulatorial" class="group-icon">
+                        <h3>Regulação Ambulatorial</h3>
+                        <a href="https://app.wiki.saude.es.gov.br/" target="_blank" class="info-button" aria-label="Mais informações sobre Regulação Ambulatorial na Wiki da SESA-ES" title="Mais informações sobre Regulação Ambulatorial na Wiki da SESA-ES">
+                            <i class="fas fa-info"></i>
+                        </a>
+                    </div>
+                    <div class="group-description">
+                        <p>O principal objetivo da regulação ambulatorial no SUS é garantir o acesso universal e equitativo aos serviços de saúde, através do controle e organização dos fluxos de atendimento.</p>
+                    </div>
+                    <button class="group-button" aria-label="Acessar grupo de Regulação Ambulatorial">
+                        <i class="fas fa-folder"></i>
+                        Acessar grupo
+                    </button>
+                </div>
+
+                <div class="group-card">
+                    <div class="group-header">
+                        <img src="assets/images/00 - Navbar Lateral Esquerda/Ícone - Mandados Judiciais.png" alt="Mandados Judiciais" class="group-icon">
+                        <h3>Mandados Judiciais</h3>
+                        <a href="https://app.wiki.saude.es.gov.br/" target="_blank" class="info-button" aria-label="Mais informações sobre Mandados Judiciais na Wiki da SESA-ES" title="Mais informações sobre Mandados Judiciais na Wiki da SESA-ES">
+                            <i class="fas fa-info"></i>
+                        </a>
+                    </div>
+                    <div class="group-description">
+                        <p>A judicialização da saúde é um desafio complexo que exige equilíbrio entre direitos individuais e sustentabilidade do sistema público de saúde.</p>
+                    </div>
+                    <button class="group-button" aria-label="Acessar grupo de Mandados Judiciais">
+                        <i class="fas fa-folder"></i>
+                        Acessar grupo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo da Página de Regulação Ambulatorial -->
+        <div class="page-content hidden" id="page-regulation">
+            <div class="page-header">
+                <div class="back-link">
+                    <a href="#" id="back-to-public">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Voltar</span>
+                    </a>
+                </div>
+                <h1>Regulação Ambulatorial</h1>
+                <p class="page-description">
+                    O principal objetivo da regulação ambulatorial no SUS é garantir o acesso universal e equitativo aos serviços de saúde, através do controle e organização dos fluxos de atendimento. <a href="#" class="learn-more">Saiba mais</a>
+                </p>
+            </div>
+
+            <div class="panels-grid">
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>Absenteísmo</h3>
+                    </div>
+                    <a href="https://sesa.viya.saude.es.gov.br/regamb-absenteismo" target="_blank" class="panel-button" aria-label="Acessar painel de Absenteísmo">
+                        <i class="fas fa-chart-bar"></i>
+                        Acessar painel
+                    </a>
+                </div>
+
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>Gestão Clínica</h3>
+                    </div>
+                    <a href="https://sesa.viya.saude.es.gov.br/regamb-gestao-clinica" target="_blank" class="panel-button" aria-label="Acessar painel de Gestão Clínica">
+                        <i class="fas fa-chart-bar"></i>
+                        Acessar painel
+                    </a>
+                </div>
+
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>Gestão de Acesso</h3>
+                    </div>
+                    <a href="https://sesa.viya.saude.es.gov.br/regamb-gestao-acesso" target="_blank" class="panel-button" aria-label="Acessar painel de Gestão de Acesso">
+                        <i class="fas fa-chart-bar"></i>
+                        Acessar painel
+                    </a>
+                </div>
+
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>Gestão de Filas</h3>
+                    </div>
+                    <a href="https://sesa.viya.saude.es.gov.br/regamb-gestao-filas" target="_blank" class="panel-button" aria-label="Acessar painel de Gestão de Filas">
+                        <i class="fas fa-chart-bar"></i>
+                        Acessar painel
+                    </a>
+                </div>
+
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>Gestão de Oferta</h3>
+                    </div>
+                    <a href="https://sesa.viya.saude.es.gov.br/regamb-gestao-oferta" target="_blank" class="panel-button" aria-label="Acessar painel de Gestão de Oferta">
+                        <i class="fas fa-chart-bar"></i>
+                        Acessar painel
+                    </a>
+                </div>
+
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>Opinião Formativa</h3>
+                    </div>
+                    <a href="https://sesa.viya.saude.es.gov.br/regamb-opiniao-formativa" target="_blank" class="panel-button" aria-label="Acessar painel de Opinião Formativa">
+                        <i class="fas fa-chart-bar"></i>
+                        Acessar painel
+                    </a>
+                </div>
+
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>Logística de Atendimento Médico</h3>
+                    </div>
+                    <a href="https://sesa.viya.saude.es.gov.br/regamb-logistica-atendimento-medico" target="_blank" class="panel-button" aria-label="Acessar painel de Logística de Atendimento Médico">
+                        <i class="fas fa-chart-bar"></i>
+                        Acessar painel
+                    </a>
+                </div>
+
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>Gestão Enunciado CNJ93</h3>
+                    </div>
+                    <a href="https://sesa.viya.saude.es.gov.br/regamb-gestao-enunciado-cnj93" target="_blank" class="panel-button" aria-label="Acessar painel de Gestão Enunciado CNJ93">
+                        <i class="fas fa-chart-bar"></i>
+                        Acessar painel
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo da Página de Mandados Judiciais -->
+        <div class="page-content hidden" id="page-judicial">
+            <div class="page-header">
+                <div class="back-link">
+                    <a href="#" id="back-to-public-judicial">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Voltar</span>
+                    </a>
+                </div>
+                <h1>Mandados Judiciais</h1>
+                <p class="page-description">
+                    Sistema de gestão e acompanhamento de mandados judiciais relacionados à saúde, garantindo o cumprimento de prazos e a eficiência no atendimento às demandas judiciais.
+                </p>
+            </div>
+
+            <div class="panels-grid">
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>Acompanhamento de Processos</h3>
+                    </div>
+                    <a href="https://sesa.viya.saude.es.gov.br/mj-acompanhamento-processos" target="_blank" class="panel-button" aria-label="Acessar painel de Acompanhamento de Processos">
+                        <i class="fas fa-chart-bar"></i>
+                        Acessar painel
+                    </a>
+                </div>
+
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>Judicialização da Saúde</h3>
+                    </div>
+                    <a href="https://sesa.viya.saude.es.gov.br/mj-judicializacao-saude" target="_blank" class="panel-button" aria-label="Acessar painel de Judicialização da Saúde">
+                        <i class="fas fa-chart-bar"></i>
+                        Acessar painel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Indicador de Status de Autenticação -->
+    <div class="auth-status" id="auth-status">
+        <div class="auth-status__indicator"></div>
+        <span class="auth-status__text">Verificando autenticação...</span>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="assets/js/sas-auth.js"></script>
+    <script src="assets/js/main.js"></script>
+    
+    <script>
+        // Configurar indicador de status de autenticação
+        document.addEventListener('DOMContentLoaded', () => {
+            const statusElement = document.getElementById('auth-status');
+            
+            // Mostrar status após inicialização
+            setTimeout(() => {
+                if (statusElement) {
+                    statusElement.classList.add('auth-status--show');
+                    updateAuthStatus();
+                }
+            }, 2000);
+            
+            // Atualizar status periodicamente
+            setInterval(updateAuthStatus, 30000); // A cada 30 segundos
+        });
+        
+        function updateAuthStatus() {
+            const statusElement = document.getElementById('auth-status');
+            if (!statusElement || !window.SASAuth) return;
+            
+            const status = window.SASAuth.getStatus();
+            const indicator = statusElement.querySelector('.auth-status__indicator');
+            const text = statusElement.querySelector('.auth-status__text');
+            
+            // Remover classes anteriores
+            statusElement.classList.remove('auth-status--authenticated', 'auth-status--guest');
+            
+            if (status.isAuthenticated) {
+                if (status.isGuest) {
+                    statusElement.classList.add('auth-status--guest');
+                    text.textContent = 'Logado como convidado';
+                } else {
+                    statusElement.classList.add('auth-status--authenticated');
+                    const userName = status.userInfo?.name || 'usuário';
+                    text.textContent = `Logado como ${userName}`;
+                }
+            } else {
+                text.textContent = 'Não autenticado';
+            }
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,313 @@
+/* Estilos para Sistema de Autenticação SAS */
+
+/* Notificações de autenticação */
+.auth-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    max-width: 400px;
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    border-left: 4px solid var(--primary-blue);
+    z-index: 9999;
+    transform: translateX(100%);
+    transition: var(--transition);
+    opacity: 0;
+}
+
+.auth-notification--show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.auth-notification--success {
+    border-left-color: var(--success-green);
+}
+
+.auth-notification--error {
+    border-left-color: var(--danger-red);
+}
+
+.auth-notification--warning {
+    border-left-color: var(--warning-yellow);
+}
+
+.auth-notification__content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+}
+
+.auth-notification__content i:first-child {
+    font-size: 1.1rem;
+    color: var(--primary-blue);
+    flex-shrink: 0;
+}
+
+.auth-notification--success .auth-notification__content i:first-child {
+    color: var(--success-green);
+}
+
+.auth-notification--error .auth-notification__content i:first-child {
+    color: var(--danger-red);
+}
+
+.auth-notification--warning .auth-notification__content i:first-child {
+    color: var(--warning-yellow);
+}
+
+.auth-notification__content span {
+    flex: 1;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    line-height: 1.4;
+}
+
+.auth-notification__close {
+    background: none;
+    border: none;
+    color: var(--medium-gray);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.auth-notification__close:hover {
+    background: var(--light-gray);
+    color: var(--text-dark);
+}
+
+.auth-notification__close:focus {
+    outline: 2px solid var(--secondary-blue);
+    outline-offset: 2px;
+}
+
+/* Modal de confirmação de acesso */
+.auth-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+}
+
+.auth-modal--show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.auth-modal__content {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    transform: scale(0.9);
+    transition: var(--transition);
+}
+
+.auth-modal--show .auth-modal__content {
+    transform: scale(1);
+}
+
+.auth-modal__header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.auth-modal__header i {
+    font-size: 1.5rem;
+    color: var(--primary-blue);
+}
+
+.auth-modal__header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-black);
+}
+
+.auth-modal__body p {
+    color: var(--text-dark);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.auth-modal__actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+}
+
+.auth-modal__button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.auth-modal__button--primary {
+    background: var(--primary-blue);
+    color: var(--white);
+}
+
+.auth-modal__button--primary:hover {
+    background: var(--accent-pink);
+    transform: translateY(-1px);
+}
+
+.auth-modal__button--secondary {
+    background: var(--light-gray);
+    color: var(--text-dark);
+}
+
+.auth-modal__button--secondary:hover {
+    background: var(--medium-gray);
+    color: var(--white);
+}
+
+.auth-modal__button:focus {
+    outline: 2px solid var(--secondary-blue);
+    outline-offset: 2px;
+}
+
+/* Indicador de status de autenticação */
+.auth-status {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--white);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    z-index: 1001;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: var(--transition);
+}
+
+.auth-status--show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.auth-status__indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--danger-red);
+    transition: var(--transition);
+}
+
+.auth-status--authenticated .auth-status__indicator {
+    background: var(--success-green);
+}
+
+.auth-status--guest .auth-status__indicator {
+    background: var(--warning-yellow);
+}
+
+.auth-status__text {
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+/* Loading spinner para operações de autenticação */
+.auth-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.auth-loading__spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--light-gray);
+    border-top: 2px solid var(--primary-blue);
+    border-radius: 50%;
+    animation: auth-spin 1s linear infinite;
+}
+
+@keyframes auth-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+    .auth-notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .auth-modal__content {
+        margin: 1rem;
+        padding: 1.5rem;
+        width: calc(100% - 2rem);
+    }
+    
+    .auth-modal__actions {
+        flex-direction: column;
+    }
+    
+    .auth-modal__button {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .auth-status {
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        justify-content: center;
+    }
+}
+
+/* Estados de foco para acessibilidade */
+.auth-notification:focus-within {
+    outline: 2px solid var(--secondary-blue);
+    outline-offset: 2px;
+}
+
+/* Animações suaves */
+@media (prefers-reduced-motion: reduce) {
+    .auth-notification,
+    .auth-modal,
+    .auth-modal__content,
+    .auth-status,
+    .auth-loading__spinner {
+        animation: none !important;
+        transition: none !important;
+    }
+} 
