@@ -71,3 +71,5 @@ pagina-inicial-sesa/
 ## Licença
 
 Desenvolvido para a Secretaria de Estado da Saúde do Espírito Santo (SESA-ES).
+
+Responsável Gustavo Aguiar.
