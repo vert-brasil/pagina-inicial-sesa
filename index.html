@@ -13,16 +13,12 @@
     
     <!-- CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/auth-styles.css">
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- SAS Authentication Library -->
-    <script async src="https://cdn.developer.sas.com/packages/sas-auth-browser/latest/dist/index.min.js"></script>
 </head>
 <body>
     <!-- Sidebar de Navegação -->
@@ -455,57 +451,7 @@
         </div>
     </main>
 
-    <!-- Indicador de Status de Autenticação -->
-    <div class="auth-status" id="auth-status">
-        <div class="auth-status__indicator"></div>
-        <span class="auth-status__text">Verificando autenticação...</span>
-    </div>
-
     <!-- JavaScript -->
-    <script src="assets/js/sas-auth.js"></script>
     <script src="assets/js/main.js"></script>
-    
-    <script>
-        // Configurar indicador de status de autenticação
-        document.addEventListener('DOMContentLoaded', () => {
-            const statusElement = document.getElementById('auth-status');
-            
-            // Mostrar status após inicialização
-            setTimeout(() => {
-                if (statusElement) {
-                    statusElement.classList.add('auth-status--show');
-                    updateAuthStatus();
-                }
-            }, 2000);
-            
-            // Atualizar status periodicamente
-            setInterval(updateAuthStatus, 30000); // A cada 30 segundos
-        });
-        
-        function updateAuthStatus() {
-            const statusElement = document.getElementById('auth-status');
-            if (!statusElement || !window.SASAuth) return;
-            
-            const status = window.SASAuth.getStatus();
-            const indicator = statusElement.querySelector('.auth-status__indicator');
-            const text = statusElement.querySelector('.auth-status__text');
-            
-            // Remover classes anteriores
-            statusElement.classList.remove('auth-status--authenticated', 'auth-status--guest');
-            
-            if (status.isAuthenticated) {
-                if (status.isGuest) {
-                    statusElement.classList.add('auth-status--guest');
-                    text.textContent = 'Logado como convidado';
-                } else {
-                    statusElement.classList.add('auth-status--authenticated');
-                    const userName = status.userInfo?.name || 'usuário';
-                    text.textContent = `Logado como ${userName}`;
-                }
-            } else {
-                text.textContent = 'Não autenticado';
-            }
-        }
-    </script>
 </body>
 </html> 

@@ -1,13 +1,13 @@
 /**
  * Módulo de Autenticação SAS para CIEGES-ES
- * Compatível com a implementação padrão do sas-auth-browser
+ * Gerencia autenticação baseada em cookies usando sas-auth-browser
  */
 
 // Configuração da autenticação SAS
 const SAS_CONFIG = {
     // URL do servidor SAS Viya - SUBSTITUA pela URL real do seu ambiente
     url: 'https://sesa.viya.saude.es.gov.br',
-    guest: false, // Permitir login automático como guest se necessário
+    guest: false, // Não permitir login automático como guest
     maxRetries: 3,
     retryDelay: 1000
 };
@@ -19,8 +19,7 @@ const authState = {
     userInfo: null,
     sasAuthInstance: null,
     lastCheck: null,
-    checkInterval: 5 * 60 * 1000, // 5 minutos
-    isInitialized: false
+    checkInterval: 5 * 60 * 1000 // 5 minutos
 };
 
 /**
@@ -30,17 +29,18 @@ const initSASAuth = async () => {
     try {
         console.log('Inicializando autenticação SAS...');
         
-        // Aguardar a biblioteca estar disponível
-        await waitForSASAuthLibrary();
+        // Verificar se a biblioteca sas-auth-browser está disponível
+        if (typeof sasAuthBrowser === 'undefined') {
+            throw new Error('Biblioteca sas-auth-browser não encontrada');
+        }
         
-        // Criar instância de autenticação usando a mesma abordagem do código funcional
+        // Criar instância de autenticação
         authState.sasAuthInstance = sasAuthBrowser.createCookieAuthenticationCredential({
             url: SAS_CONFIG.url,
             guest: SAS_CONFIG.guest
         });
         
         console.log('Instância SAS Auth criada com sucesso');
-        authState.isInitialized = true;
         
         // Verificar status inicial de autenticação
         await checkAuthenticationStatus();
@@ -58,37 +58,10 @@ const initSASAuth = async () => {
 };
 
 /**
- * Aguardar a biblioteca sas-auth-browser estar disponível
- */
-const waitForSASAuthLibrary = () => {
-    return new Promise((resolve, reject) => {
-        let attempts = 0;
-        const maxAttempts = 20; // 10 segundos
-        
-        const checkLibrary = () => {
-            if (typeof sasAuthBrowser !== 'undefined') {
-                resolve();
-                return;
-            }
-            
-            attempts++;
-            if (attempts >= maxAttempts) {
-                reject(new Error('Biblioteca sas-auth-browser não carregou'));
-                return;
-            }
-            
-            setTimeout(checkLibrary, 500);
-        };
-        
-        checkLibrary();
-    });
-};
-
-/**
- * Verificar status de autenticação - seguindo o padrão do código funcional
+ * Verificar status de autenticação
  */
 const checkAuthenticationStatus = async () => {
-    if (!authState.sasAuthInstance || !authState.isInitialized) {
+    if (!authState.sasAuthInstance) {
         console.warn('Instância SAS Auth não inicializada');
         return false;
     }
@@ -96,7 +69,6 @@ const checkAuthenticationStatus = async () => {
     try {
         console.log('Verificando status de autenticação...');
         
-        // Usar o método checkAuthenticated da biblioteca
         await authState.sasAuthInstance.checkAuthenticated();
         
         // Se chegou até aqui, o usuário está autenticado
@@ -105,13 +77,13 @@ const checkAuthenticationStatus = async () => {
         
         console.log('Usuário autenticado com sucesso');
         
-        // Tentar determinar se é usuário guest
-        await determineUserType();
+        // Tentar obter informações do usuário se disponível
+        await getUserInfo();
         
         return true;
         
     } catch (error) {
-        console.log('Usuário não autenticado:', error);
+        console.log('Usuário não autenticado:', error.message);
         authState.isAuthenticated = false;
         authState.isGuest = false;
         authState.userInfo = null;
@@ -122,17 +94,16 @@ const checkAuthenticationStatus = async () => {
 };
 
 /**
- * Determinar se é usuário guest
+ * Obter informações do usuário autenticado
  */
-const determineUserType = async () => {
+const getUserInfo = async () => {
     try {
-        // Tentar fazer uma requisição para obter informações do usuário
+        // Fazer uma requisição para obter informações do usuário
         const response = await fetch(`${SAS_CONFIG.url}/identities/users/@currentUser`, {
             credentials: 'include',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
+                'Content-Type': 'application/json'
             }
         });
         
@@ -140,64 +111,45 @@ const determineUserType = async () => {
             const userInfo = await response.json();
             authState.userInfo = userInfo;
             
-            // Verificar se é usuário guest baseado no nome ou ID
-            authState.isGuest = userInfo.name === 'guest' || 
-                              userInfo.id === 'guest' ||
-                              userInfo.name === 'sasguest' ||
-                              userInfo.id === 'sasguest';
+            // Verificar se é usuário guest
+            authState.isGuest = userInfo.name === 'guest' || userInfo.id === 'guest';
             
-            console.log('Informações do usuário obtidas:', {
-                name: userInfo.name,
-                isGuest: authState.isGuest
-            });
-        } else {
-            // Se não conseguir obter info do usuário, assumir que não é guest
-            authState.isGuest = false;
-            console.log('Não foi possível obter informações do usuário, assumindo usuário autenticado');
+            console.log('Informações do usuário obtidas:', userInfo.name);
         }
         
     } catch (error) {
-        console.warn('Erro ao determinar tipo de usuário:', error);
-        // Em caso de erro, assumir que não é guest se está autenticado
-        authState.isGuest = false;
+        console.warn('Não foi possível obter informações do usuário:', error);
     }
 };
 
 /**
- * Realizar login via popup - seguindo o padrão do código funcional
+ * Realizar login via popup
  */
 const loginWithPopup = async () => {
-    if (!authState.sasAuthInstance || !authState.isInitialized) {
+    if (!authState.sasAuthInstance) {
         throw new Error('Sistema de autenticação não inicializado');
     }
     
     try {
         console.log('Iniciando processo de login...');
-        showAuthMessage('Abrindo janela de login...', 'info');
+        showAuthMessage('Abrindo janela de login...');
         
-        // Usar o método loginPopup da biblioteca (igual ao código funcional)
         await authState.sasAuthInstance.loginPopup();
         
         console.log('Login realizado com sucesso');
         
         // Verificar status após login
-        const isAuthenticated = await checkAuthenticationStatus();
+        await checkAuthenticationStatus();
         
-        if (isAuthenticated) {
-            showAuthMessage('Login realizado com sucesso!', 'success');
-            return true;
-        } else {
-            throw new Error('Falha na verificação pós-login');
-        }
+        showAuthMessage('Login realizado com sucesso!', 'success');
+        
+        return true;
         
     } catch (error) {
         console.error('Erro no processo de login:', error);
         
-        // Tratar diferentes tipos de erro
-        if (error.message && error.message.includes('popup')) {
+        if (error.message.includes('popup')) {
             showAuthError('Login cancelado ou janela de login foi fechada');
-        } else if (error.message && error.message.includes('failed to log in')) {
-            showAuthError('Falha no processo de login. Verifique suas credenciais.');
         } else {
             showAuthError('Erro no processo de login. Tente novamente.');
         }
@@ -207,19 +159,18 @@ const loginWithPopup = async () => {
 };
 
 /**
- * Realizar logout - usando o método da biblioteca
+ * Realizar logout
  */
 const logout = async () => {
-    if (!authState.sasAuthInstance || !authState.isInitialized) {
+    if (!authState.sasAuthInstance) {
         console.warn('Sistema de autenticação não inicializado');
         return;
     }
     
     try {
         console.log('Realizando logout...');
-        showAuthMessage('Encerrando sessão...', 'info');
+        showAuthMessage('Encerrando sessão...');
         
-        // Usar o método logout da biblioteca
         await authState.sasAuthInstance.logout();
         
         // Limpar estado local
@@ -233,7 +184,7 @@ const logout = async () => {
         
         // Redirecionar para página inicial
         if (typeof navigateToPage === 'function') {
-            setTimeout(() => navigateToPage('home'), 1000);
+            navigateToPage('home');
         }
         
     } catch (error) {
@@ -246,7 +197,7 @@ const logout = async () => {
  * Invalidar cache de autenticação
  */
 const invalidateAuthCache = () => {
-    if (authState.sasAuthInstance && authState.isInitialized) {
+    if (authState.sasAuthInstance) {
         authState.sasAuthInstance.invalidateCache();
         authState.lastCheck = null;
         console.log('Cache de autenticação invalidado');
@@ -268,8 +219,8 @@ const checkRestrictedAccess = async () => {
         };
     }
     
-    // Verificar se é usuário guest (se configurado para bloquear)
-    if (authState.isGuest && !SAS_CONFIG.guest) {
+    // Verificar se é usuário guest
+    if (authState.isGuest) {
         return {
             allowed: false,
             reason: 'guest_user',
@@ -285,32 +236,10 @@ const checkRestrictedAccess = async () => {
 };
 
 /**
- * Função auxiliar similar ao exemplo funcional
- */
-const callViyaApi = async () => {
-    if (!authState.sasAuthInstance || !authState.isInitialized) {
-        throw new Error('Sistema de autenticação não inicializado');
-    }
-    
-    try {
-        await authState.sasAuthInstance.checkAuthenticated();
-        console.log('Pronto para fazer chamadas à API do Viya');
-        return true;
-    } catch (error) {
-        console.log('Usuário não autenticado, iniciando login...');
-        await authState.sasAuthInstance.loginPopup();
-        console.log('Login concluído, pronto para fazer chamadas à API');
-        return true;
-    }
-};
-
-/**
  * Configurar verificação periódica de autenticação
  */
 const setupPeriodicAuthCheck = () => {
     setInterval(async () => {
-        if (!authState.isInitialized) return;
-        
         if (authState.lastCheck && (Date.now() - authState.lastCheck < authState.checkInterval)) {
             return; // Ainda dentro do intervalo
         }
@@ -332,7 +261,7 @@ const showAuthMessage = (message, type = 'info') => {
         announceToScreenReader(message);
     }
     
-    // Implementar notificação visual
+    // Implementar notificação visual se necessário
     showNotification(message, type);
 };
 
@@ -403,12 +332,11 @@ const getAuthStatus = () => {
         isAuthenticated: authState.isAuthenticated,
         isGuest: authState.isGuest,
         userInfo: authState.userInfo,
-        lastCheck: authState.lastCheck,
-        isInitialized: authState.isInitialized
+        lastCheck: authState.lastCheck
     };
 };
 
-// Exportar funções para uso global - seguindo padrão similar ao código funcional
+// Exportar funções para uso global
 window.SASAuth = {
     init: initSASAuth,
     checkStatus: checkAuthenticationStatus,
@@ -416,12 +344,11 @@ window.SASAuth = {
     login: loginWithPopup,
     logout,
     invalidateCache: invalidateAuthCache,
-    getStatus: getAuthStatus,
-    callViyaApi // Função auxiliar similar ao exemplo
+    getStatus: getAuthStatus
 };
 
 // Auto-inicializar quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', () => {
-    // Aguardar um pouco para garantir que a biblioteca foi carregada
-    setTimeout(initSASAuth, 1000);
+    // Aguardar um pouco para garantir que outras dependências foram carregadas
+    setTimeout(initSASAuth, 500);
 }); 

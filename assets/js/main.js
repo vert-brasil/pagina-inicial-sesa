@@ -208,7 +208,7 @@ const setupAccessibility = () => {
 };
 
 /**
- * Navegar para uma página específica com verificação de autenticação
+ * Navegar para uma página específica
  */
 const navigateToPage = async (pageName) => {
     console.log(`Navegando para: ${pageName}`);
@@ -217,15 +217,6 @@ const navigateToPage = async (pageName) => {
     if (state.currentPage === pageName) {
         console.log('Já está na página solicitada');
         return;
-    }
-    
-    // Verificar se é uma página que requer autenticação
-    if (pageName === 'restricted' || isRestrictedPage(pageName)) {
-        const accessCheck = await checkPageAccess(pageName);
-        if (!accessCheck.allowed) {
-            await handleRestrictedAccess(accessCheck);
-            return;
-        }
     }
     
     // Atualizar histórico de navegação
@@ -455,275 +446,9 @@ const updateBreadcrumb = (pageName) => {
 };
 
 /**
- * Verificar se uma página é restrita
+ * Manipulador de acesso aos grupos
  */
-const isRestrictedPage = (pageName) => {
-    const restrictedPages = ['restricted', 'regulation', 'judicial'];
-    return restrictedPages.includes(pageName);
-};
-
-/**
- * Verificar acesso à página
- */
-const checkPageAccess = async (pageName) => {
-    if (!isRestrictedPage(pageName)) {
-        return { allowed: true, reason: 'public_page' };
-    }
-    
-    // Verificar se o sistema de autenticação está disponível
-    if (typeof window.SASAuth === 'undefined') {
-        console.warn('Sistema de autenticação SAS não disponível');
-        return {
-            allowed: false,
-            reason: 'auth_system_unavailable',
-            message: 'Sistema de autenticação não disponível'
-        };
-    }
-    
-    try {
-        return await window.SASAuth.checkRestrictedAccess();
-    } catch (error) {
-        console.error('Erro ao verificar acesso:', error);
-        return {
-            allowed: false,
-            reason: 'auth_error',
-            message: 'Erro ao verificar permissões de acesso'
-        };
-    }
-};
-
-/**
- * Lidar com acesso restrito negado
- */
-const handleRestrictedAccess = async (accessCheck) => {
-    const { reason, message } = accessCheck;
-    
-    switch (reason) {
-        case 'not_authenticated':
-            await showLoginModal();
-            break;
-            
-        case 'guest_user':
-            showGuestAccessDeniedModal();
-            break;
-            
-        case 'auth_system_unavailable':
-        case 'auth_error':
-        default:
-            showAuthErrorModal(message);
-            break;
-    }
-};
-
-/**
- * Mostrar modal de login
- */
-const showLoginModal = async () => {
-    const modal = createModal({
-        title: 'Acesso Restrito',
-        icon: 'lock',
-        content: `
-            <p>Esta área requer autenticação. Você precisa fazer login para acessar os painéis restritos.</p>
-            <p>Clique em "Fazer Login" para abrir a janela de autenticação.</p>
-        `,
-        buttons: [
-            {
-                text: 'Cancelar',
-                class: 'secondary',
-                action: () => closeModal(modal)
-            },
-            {
-                text: 'Fazer Login',
-                class: 'primary',
-                icon: 'sign-in-alt',
-                action: async () => {
-                    closeModal(modal);
-                    await attemptLogin();
-                }
-            }
-        ]
-    });
-    
-    showModal(modal);
-};
-
-/**
- * Mostrar modal para usuário guest
- */
-const showGuestAccessDeniedModal = () => {
-    const modal = createModal({
-        title: 'Acesso Negado',
-        icon: 'user-times',
-        content: `
-            <p>Você está logado como usuário convidado (guest).</p>
-            <p>Usuários convidados não têm acesso às áreas restritas. Entre em contato com o administrador do sistema para obter as credenciais adequadas.</p>
-        `,
-        buttons: [
-            {
-                text: 'Entendi',
-                class: 'primary',
-                action: (modal) => closeModal(modal)
-            },
-            {
-                text: 'Fazer Logout',
-                class: 'secondary',
-                icon: 'sign-out-alt',
-                action: async (modal) => {
-                    closeModal(modal);
-                    if (window.SASAuth) {
-                        await window.SASAuth.logout();
-                    }
-                }
-            }
-        ]
-    });
-    
-    showModal(modal);
-};
-
-/**
- * Mostrar modal de erro de autenticação
- */
-const showAuthErrorModal = (message) => {
-    const modal = createModal({
-        title: 'Erro de Autenticação',
-        icon: 'exclamation-triangle',
-        content: `
-            <p>${message}</p>
-            <p>Tente novamente ou entre em contato com o suporte técnico se o problema persistir.</p>
-        `,
-        buttons: [
-            {
-                text: 'Fechar',
-                class: 'primary',
-                action: (modal) => closeModal(modal)
-            }
-        ]
-    });
-    
-    showModal(modal);
-};
-
-/**
- * Tentar fazer login
- */
-const attemptLogin = async () => {
-    if (!window.SASAuth) {
-        showAuthErrorModal('Sistema de autenticação não disponível');
-        return;
-    }
-    
-    try {
-        const success = await window.SASAuth.login();
-        
-        if (success) {
-            // Login bem-sucedido, tentar navegar novamente
-            const targetPage = state.previousPage === 'restricted' ? 'restricted' : state.currentPage;
-            await navigateToPage(targetPage);
-        }
-        
-    } catch (error) {
-        console.error('Erro no processo de login:', error);
-        showAuthErrorModal('Erro no processo de login. Tente novamente.');
-    }
-};
-
-/**
- * Criar modal genérico
- */
-const createModal = ({ title, icon, content, buttons }) => {
-    const modal = document.createElement('div');
-    modal.className = 'auth-modal';
-    modal.setAttribute('role', 'dialog');
-    modal.setAttribute('aria-modal', 'true');
-    modal.setAttribute('aria-labelledby', 'modal-title');
-    
-    const buttonsHtml = buttons.map(button => `
-        <button class="auth-modal__button auth-modal__button--${button.class}" data-action="${button.text}">
-            ${button.icon ? `<i class="fas fa-${button.icon}"></i>` : ''}
-            ${button.text}
-        </button>
-    `).join('');
-    
-    modal.innerHTML = `
-        <div class="auth-modal__content">
-            <div class="auth-modal__header">
-                <i class="fas fa-${icon}"></i>
-                <h3 id="modal-title">${title}</h3>
-            </div>
-            <div class="auth-modal__body">
-                ${content}
-            </div>
-            <div class="auth-modal__actions">
-                ${buttonsHtml}
-            </div>
-        </div>
-    `;
-    
-    // Configurar eventos dos botões
-    buttons.forEach(button => {
-        const buttonElement = modal.querySelector(`[data-action="${button.text}"]`);
-        if (buttonElement && button.action) {
-            buttonElement.addEventListener('click', () => button.action(modal));
-        }
-    });
-    
-    // Configurar fechamento com ESC
-    modal.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            closeModal(modal);
-        }
-    });
-    
-    // Configurar fechamento clicando fora
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModal(modal);
-        }
-    });
-    
-    return modal;
-};
-
-/**
- * Mostrar modal
- */
-const showModal = (modal) => {
-    document.body.appendChild(modal);
-    
-    // Focar no primeiro botão
-    setTimeout(() => {
-        const firstButton = modal.querySelector('.auth-modal__button');
-        if (firstButton) {
-            firstButton.focus();
-        }
-        modal.classList.add('auth-modal--show');
-    }, 100);
-    
-    // Anunciar para leitores de tela
-    const title = modal.querySelector('#modal-title').textContent;
-    announceToScreenReader(`Modal aberto: ${title}`);
-};
-
-/**
- * Fechar modal
- */
-const closeModal = (modal) => {
-    modal.classList.remove('auth-modal--show');
-    
-    setTimeout(() => {
-        if (modal.parentNode) {
-            modal.remove();
-        }
-    }, 300);
-    
-    announceToScreenReader('Modal fechado');
-};
-
-/**
- * Manipulador de acesso aos grupos - com verificação de autenticação
- */
-const handleGroupAccess = async (event) => {
+const handleGroupAccess = (event) => {
     const button = event.currentTarget;
     const groupCard = button.closest('.group-card');
     const groupName = groupCard.querySelector('h3').textContent;
@@ -749,8 +474,8 @@ const handleGroupAccess = async (event) => {
         targetPage = 'mj-public';
     }
     
-    // Navegar para a página do grupo (com verificação de autenticação)
-    await navigateToPage(targetPage);
+    // Navegar para a página do grupo
+    navigateToPage(targetPage);
 };
 
 /**

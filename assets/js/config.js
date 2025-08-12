@@ -1,15 +1,14 @@
 /**
  * Configurações do Sistema CIEGES-ES
- * Atualizada para compatibilidade com implementação padrão do sas-auth-browser
  */
 
 window.CIEGES_CONFIG = {
-    // Configurações de Autenticação SAS - compatível com código funcional
+    // Configurações de Autenticação SAS
     sas: {
         // URL do servidor SAS Viya - ALTERE PARA SEU AMBIENTE
         url: 'https://sesa.viya.saude.es.gov.br',
         
-        // Permitir login automático como guest (igual ao código funcional)
+        // Não permitir login automático como guest
         guest: false,
         
         // Configurações de retry
@@ -21,14 +20,6 @@ window.CIEGES_CONFIG = {
         
         // Timeout para requisições (em milissegundos)
         requestTimeout: 10000, // 10 segundos
-        
-        // Endpoints específicos (baseados no código funcional)
-        endpoints: {
-            logon: '/SASVisualAnalytics/logon/index.html',
-            logout: '/SASLogon/logout.do',
-            userInfo: '/identities/users/@currentUser',
-            reports: '/reports/'
-        }
     },
     
     // Configurações de Interface
@@ -43,7 +34,7 @@ window.CIEGES_CONFIG = {
         showAuthStatus: true,
         
         // Posição do indicador de status
-        authStatusPosition: 'bottom-right',
+        authStatusPosition: 'bottom-right', // 'bottom-right', 'bottom-left', 'top-right', 'top-left'
     },
     
     // Configurações de Segurança
@@ -56,9 +47,6 @@ window.CIEGES_CONFIG = {
         
         // Tempo limite de sessão inativa (em milissegundos)
         sessionTimeout: 30 * 60 * 1000, // 30 minutos
-        
-        // Nomes de usuários considerados guest
-        guestUserNames: ['guest', 'sasguest', 'anonymous']
     },
     
     // Configurações de Analytics
@@ -93,7 +81,5 @@ window.CIEGES_CONFIG = {
         loginSuccess: 'Login realizado com sucesso!',
         logoutSuccess: 'Logout realizado com sucesso!',
         sessionExpired: 'Sua sessão expirou. Faça login novamente para continuar.',
-        popupBlocked: 'Popup de login foi bloqueado. Permita popups para este site e tente novamente.',
-        libraryNotLoaded: 'Biblioteca de autenticação não carregou. Verifique sua conexão com a internet.'
     }
 }; 
