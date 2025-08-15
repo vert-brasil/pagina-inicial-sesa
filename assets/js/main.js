@@ -24,8 +24,7 @@ const elements = {
     breadcrumbLevel1: null, breadcrumbLevel2: null, breadcrumbLevel3: null,
     breadcrumbSeparator1: null, breadcrumbSeparator2: null,
     groupButtons: [],
-    backButtons: [],
-    accessRequestButton: null
+    backButtons: []
 };
 
 /**
@@ -81,7 +80,6 @@ const cacheElements = () => {
     // Botões
     elements.groupButtons = document.querySelectorAll('.group-button');
     elements.backButtons = document.querySelectorAll('.back-link a');
-    elements.accessRequestButton = document.querySelector('.access-request-button');
     
     // Verificar elementos críticos
     if (!elements.pageHome || !elements.pagePublic || !elements.pageRestricted) {
@@ -113,11 +111,6 @@ const setupEventListeners = () => {
     }
     if (elements.mobileNavRestricted) {
         elements.mobileNavRestricted.addEventListener('click', () => navigateToPage('restricted'));
-    }
-    
-    // Botão de solicitar acesso
-    if (elements.accessRequestButton) {
-        elements.accessRequestButton.addEventListener('click', handleAccessRequest);
     }
     
     // Botões dos grupos
@@ -167,16 +160,6 @@ const setupKeyboardNavigation = () => {
             }
         });
     });
-    
-    // Navegação por teclado no botão de acesso restrito
-    if (elements.accessRequestButton) {
-        elements.accessRequestButton.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                elements.accessRequestButton.click();
-            }
-        });
-    }
 };
 
 /**
@@ -219,7 +202,7 @@ const navigateToPage = async (pageName) => {
         return;
     }
     
-    // Atualizar histórico de navegação
+    // Atualizar histórico de navegação (mantido para compatibilidade)
     state.previousPage = state.currentPage;
     state.currentPage = pageName;
     
@@ -248,22 +231,42 @@ const navigateToPage = async (pageName) => {
 };
 
 /**
- * Voltar para a página anterior
+ * Voltar para a página anterior respeitando a hierarquia
  */
 const goBack = () => {
-    if (state.navigationHistory.length > 1) {
-        state.navigationHistory.pop();
-        const previousPage = state.navigationHistory[state.navigationHistory.length - 1];
-        console.log(`Voltando para página: ${previousPage}`);
+    console.log(`Tentando voltar da página: ${state.currentPage}`);
+    
+    // Definir a hierarquia de páginas
+    const pageHierarchy = {
+        // Páginas de base (painéis) - voltam para o grupo pai
+        'regulation': 'public',      // Regulação Ambulatorial → Acesso Público
+        'judicial': 'public',        // Mandados Judiciais → Acesso Público
+        'mj-public': 'public',       // MJ Painel Público → Acesso Público
         
-        // Se estamos voltando de uma página de grupo, limpar a página pai
+        // Páginas de grupo - voltam para página inicial
+        'public': 'home',            // Acesso Público → Página Inicial
+        'restricted': 'home',        // Acesso Restrito → Página Inicial
+        
+        // Página inicial - não tem para onde voltar
+        'home': null
+    };
+    
+    // Obter a página de destino baseada na hierarquia
+    const targetPage = pageHierarchy[state.currentPage];
+    
+    if (targetPage) {
+        console.log(`Voltando para: ${targetPage} (hierarquia)`);
+        
+        // Limpar a página pai se estivermos voltando de uma página de grupo
         if (state.currentPage === 'regulation' || state.currentPage === 'judicial' || state.currentPage === 'mj-public') {
             state.parentPage = null;
         }
         
-        navigateToPage(previousPage);
+        // Navegar para a página de destino
+        navigateToPage(targetPage);
     } else {
-        navigateToPage('home');
+        console.log('Já está na página inicial - não há para onde voltar');
+        // Se já estiver na página inicial, não fazer nada
     }
 };
 
@@ -476,26 +479,6 @@ const handleGroupAccess = (event) => {
     
     // Navegar para a página do grupo
     navigateToPage(targetPage);
-};
-
-/**
- * Manipulador de solicitação de acesso restrito
- */
-const handleAccessRequest = () => {
-    console.log('Solicitando acesso restrito...');
-    announceToScreenReader('Solicitando acesso restrito...');
-    showInfoMessage('Solicitação de acesso restrito enviada com sucesso!');
-};
-
-/**
- * Mostrar mensagem informativa
- */
-const showInfoMessage = (message) => {
-    console.info('ℹ️', message);
-    announceToScreenReader(message);
-    
-    // Implementar toast notification no futuro
-    alert(message);
 };
 
 /**

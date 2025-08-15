@@ -171,7 +171,7 @@ body {
     border: none;
     border-radius: 8px;
     padding: 0.75rem 1rem;
-    font-size: 0.85rem; /* Reduzido de 0.9rem para 0.85rem */
+    font-size: 0.85rem;
     font-weight: 500;
     cursor: pointer;
     transition: var(--transition);
@@ -180,17 +180,22 @@ body {
     justify-content: center;
     gap: 0.5rem;
     box-shadow: var(--shadow-sm);
+    text-decoration: none;
 }
 
 .access-request-button:hover {
     background: rgba(255, 255, 255, 0.9);
     transform: translateY(-1px);
     box-shadow: var(--shadow-md);
+    color: var(--primary-blue);
+    text-decoration: none;
 }
 
 .access-request-button:focus {
     outline: 2px solid var(--white);
     outline-offset: 2px;
+    color: var(--primary-blue);
+    text-decoration: none;
 }
 
 .access-request-button i {
